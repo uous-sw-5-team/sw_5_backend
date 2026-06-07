@@ -1,0 +1,9 @@
+[env]
+COREAUDIO_SDK_PATH = "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk"
+BINDGEN_EXTRA_CLANG_ARGS = "--target=aarch64-apple-darwin -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk"
+
+# if you use xcode instead of command line tools, use under these
+#[env]
+#COREAUDIO_SDK_PATH = "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
+#BINDGEN_EXTRA_CLANG_ARGS = "--target=aarch64-apple-darwin -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"
+# 
