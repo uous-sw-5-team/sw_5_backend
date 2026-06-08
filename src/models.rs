@@ -53,6 +53,36 @@ pub struct Plan {
     pub updated_at: DateTime<Utc>,
 }
 
+// 프론트로 내보내는 형태: id를 평문 문자열("abc123")로 직렬화.
+// 경로 파라미터(/plans/{id})에 그대로 다시 넣어 사용 가능.
+#[derive(Debug, Serialize)]
+pub struct PlanPublic {
+    pub id: String,
+    pub user_id: String,
+    pub date: NaiveDate,
+    pub title: String,
+    pub content: Option<String>,
+    pub photos: Vec<String>,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+}
+
+impl From<Plan> for PlanPublic {
+    fn from(p: Plan) -> Self {
+        let id = p.id.map(|t| t.id.to_raw()).unwrap_or_default();
+        PlanPublic {
+            id,
+            user_id: p.user_id,
+            date: p.date,
+            title: p.title,
+            content: p.content,
+            photos: p.photos,
+            created_at: p.created_at,
+            updated_at: p.updated_at,
+        }
+    }
+}
+
 #[derive(Debug, Deserialize)]
 pub struct CreatePlanRequest {
     pub date: NaiveDate,

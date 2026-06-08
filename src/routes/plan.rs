@@ -8,7 +8,7 @@ use crate::{
     AppState,
     auth::AuthUser,
     error::{AppError, Result},
-    models::{CreatePlanRequest, Plan, UpdatePlanRequest},
+    models::{CreatePlanRequest, Plan, PlanPublic, UpdatePlanRequest},
 };
 
 #[derive(Deserialize)]
@@ -21,7 +21,7 @@ pub async fn list(
     State(state): State<AppState>,
     AuthUser(claims): AuthUser,
     Query(filter): Query<DateFilter>,
-) -> Result<Json<Vec<Plan>>> {
+) -> Result<Json<Vec<PlanPublic>>> {
     let plans: Vec<Plan> = if let Some(date) = filter.date {
         state
             .db
@@ -51,14 +51,14 @@ pub async fn list(
             .take(0)?
     };
 
-    Ok(Json(plans))
+    Ok(Json(plans.into_iter().map(PlanPublic::from).collect()))
 }
 
 pub async fn create(
     State(state): State<AppState>,
     AuthUser(claims): AuthUser,
     Json(req): Json<CreatePlanRequest>,
-) -> Result<Json<Plan>> {
+) -> Result<Json<PlanPublic>> {
     let plan: Option<Plan> = state
         .db
         .client
@@ -79,14 +79,15 @@ pub async fn create(
         .await?
         .take(0)?;
 
-    plan.map(Json).ok_or_else(|| AppError::Internal(anyhow::anyhow!("플랜 생성 실패")))
+    plan.map(|p| Json(PlanPublic::from(p)))
+        .ok_or_else(|| AppError::Internal(anyhow::anyhow!("플랜 생성 실패")))
 }
 
 pub async fn get_one(
     State(state): State<AppState>,
     AuthUser(claims): AuthUser,
     Path(id): Path<String>,
-) -> Result<Json<Plan>> {
+) -> Result<Json<PlanPublic>> {
     let plan: Option<Plan> = state
         .db
         .client
@@ -96,7 +97,7 @@ pub async fn get_one(
         .await?
         .take(0)?;
 
-    plan.map(Json)
+    plan.map(|p| Json(PlanPublic::from(p)))
         .ok_or_else(|| AppError::NotFound("플랜을 찾을 수 없습니다.".into()))
 }
 
@@ -105,7 +106,7 @@ pub async fn update(
     AuthUser(claims): AuthUser,
     Path(id): Path<String>,
     Json(req): Json<UpdatePlanRequest>,
-) -> Result<Json<Plan>> {
+) -> Result<Json<PlanPublic>> {
     let existing: Option<Plan> = state
         .db
         .client
@@ -134,7 +135,7 @@ pub async fn update(
         .await?
         .take(0)?;
 
-    plan.map(Json)
+    plan.map(|p| Json(PlanPublic::from(p)))
         .ok_or_else(|| AppError::Internal(anyhow::anyhow!("플랜 업데이트 실패")))
 }
 

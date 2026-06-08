@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Study Planner - 로그인</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "error": "#ba1a1a",
+                "surface-dim": "#d9dadb",
+                "outline-variant": "#c5c6cf",
+                "on-error": "#ffffff",
+                "surface-variant": "#e1e3e4",
+                "tertiary-container": "#171c1e",
+                "on-tertiary-container": "#808587",
+                "surface-container-lowest": "#ffffff",
+                "secondary-fixed": "#a0f0f0",
+                "tertiary": "#000000",
+                "inverse-primary": "#b6c6ee",
+                "inverse-surface": "#2e3132",
+                "tertiary-fixed": "#dfe3e6",
+                "on-error-container": "#93000a",
+                "on-tertiary": "#ffffff",
+                "surface-tint": "#4e5e81",
+                "error-container": "#ffdad6",
+                "on-secondary-fixed": "#002020",
+                "outline": "#75777f",
+                "on-secondary-container": "#0b6e6e",
+                "on-tertiary-fixed": "#171c1e",
+                "primary-fixed-dim": "#b6c6ee",
+                "primary-fixed": "#d8e2ff",
+                "background": "#f8f9fa",
+                "secondary-container": "#9deeed",
+                "primary": "#031635",
+                "on-primary": "#ffffff",
+                "on-secondary": "#ffffff",
+                "surface": "#f8f9fa",
+                "on-secondary-fixed-variant": "#004f4f",
+                "on-primary-container": "#7384a8",
+                "success-teal": "#006a6a",
+                "secondary-fixed-dim": "#84d4d3",
+                "on-background": "#191c1d",
+                "surface-container-highest": "#e1e3e4",
+                "secondary": "#006a6a",
+                "surface-bright": "#f8f9fa",
+                "primary-container": "#081b3a",
+                "surface-container": "#edeeef",
+                "on-surface-variant": "#44474e",
+                "on-tertiary-fixed-variant": "#42484a",
+                "tertiary-fixed-dim": "#c3c7ca",
+                "inverse-on-surface": "#f0f1f2",
+                "on-surface": "#191c1d",
+                "on-primary-fixed": "#081b3a",
+                "error-red": "#ba1a1a",
+                "surface-container-high": "#e7e8e9"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.5rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "container-max-width": "1536px",
+                "unit": "8px",
+                "margin-mobile": "16px",
+                "margin-desktop": "40px",
+                "gutter": "32px"
+            },
+            "fontFamily": {
+                "body-lg": ["Inter"],
+                "headline-lg-mobile": ["Inter"],
+                "title-md": ["Inter"],
+                "headline-lg": ["Inter"],
+                "body-sm": ["Inter"],
+                "label-md": ["Inter"],
+                "display-lg": ["Inter"]
+            },
+            "fontSize": {
+                "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #f8f9fa;
+            background-image: 
+                radial-gradient(#E0E4E8 1px, transparent 1px),
+                radial-gradient(#E0E4E8 1px, transparent 1px);
+            background-size: 32px 32px;
+            background-position: 0 0, 16px 16px;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .login-card {
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.03);
+        }
+        input:focus + span.material-symbols-outlined {
+            color: #006a6a;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen font-body-lg text-on-background">
+<!-- Main content area -->
+<main class="flex-grow flex flex-col items-center justify-center p-margin-mobile md:p-margin-desktop">
+<!-- Header with Logo -->
+<header class="mb-12 flex flex-col items-center text-center">
+<a class="w-20 h-20 mb-6 block hover:opacity-80 transition-opacity" href="index.html">
+<img alt="StudyPlanner Logo" class="w-full h-full object-contain rounded-lg shadow-sm" src="logo.png"/>
+</a>
+<h1 class="font-display-lg text-headline-lg-mobile md:text-headline-lg text-primary tracking-tight">Study Planner</h1>
+<p class="font-title-md text-on-surface-variant mt-2">당신의 성공을 설계하세요</p>
+</header>
+<!-- Centered Login Card -->
+<div class="login-card w-full max-w-md bg-surface-container-lowest p-8 md:p-10 border border-outline-variant rounded-xl">
+<h2 class="font-headline-lg text-title-md text-on-surface mb-8">다시 오신 것을 환영합니다</h2>
+<form class="space-y-6" id="loginForm">
+<!-- Username Field -->
+<div class="space-y-2">
+<label class="block font-label-md text-on-surface-variant uppercase tracking-wider" for="username">아이디 / 사용자 이름</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline transition-colors pointer-events-none">person</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-sm focus:ring-2 focus:ring-secondary focus:border-secondary transition-all outline-none" id="username" name="username" placeholder="학생 번호를 입력하세요" required="" type="text"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<label class="block font-label-md text-on-surface-variant uppercase tracking-wider" for="password">비밀번호</label>
+<a class="font-label-md text-secondary hover:underline transition-all" href="#">비밀번호를 잊으셨나요?</a>
+</div>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline transition-colors pointer-events-none">lock</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-sm focus:ring-2 focus:ring-secondary focus:border-secondary transition-all outline-none" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+</div>
+</div>
+<!-- Remember Me -->
+<div class="flex items-center space-x-2">
+<input class="w-4 h-4 text-secondary border-outline-variant rounded focus:ring-secondary transition-all cursor-pointer" id="remember" type="checkbox"/>
+<label class="font-body-sm text-on-surface-variant cursor-pointer" for="remember">로그인 상태 유지</label>
+</div>
+<!-- Primary Button -->
+<button class="w-full py-4 bg-primary text-on-primary font-title-md rounded-lg shadow-md hover:bg-opacity-90 active:scale-[0.98] transition-all relative overflow-hidden group" type="submit">
+<span class="relative z-10">로그인</span>
+<div class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</button>
+</form>
+<!-- Sign Up Redirect -->
+<div class="mt-8 pt-8 border-t border-outline-variant text-center">
+<p class="font-body-sm text-on-surface-variant">
+                    StudyPlanner가 처음이신가요? 
+                    <a class="font-title-md text-secondary hover:underline ml-1" href="signup.html">회원가입</a>
+</p>
+</div>
+</div>
+<!-- Footer / Support links -->
+<footer class="mt-12 text-center">
+<nav class="flex space-x-6 justify-center text-outline font-label-md uppercase tracking-widest">
+<a class="hover:text-primary transition-colors" href="#">개인정보처리방침</a>
+<a class="hover:text-primary transition-colors" href="#">이용약관</a>
+<a class="hover:text-primary transition-colors" href="#">도움말</a>
+</nav>
+<div class="mt-4">
+<a class="text-on-surface-variant hover:text-primary transition-colors text-body-sm flex items-center justify-center gap-1" href="index.html">
+<span class="material-symbols-outlined text-sm">arrow_back</span>
+                    홈으로 돌아가기
+                </a>
+</div>
+</footer>
+</main>
+<script>
+        /**
+         * Study Planner Login Logic
+         * Self-contained JavaScript for production-ready login experience
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputs = document.querySelectorAll('input[type="text"], input[type="password"]');
+            
+            // Micro-interaction for input icon focus states
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    const icon = input.parentElement.querySelector('.material-symbols-outlined');
+                    if (icon) {
+                        icon.classList.remove('text-outline');
+                        icon.classList.add('text-secondary');
+                    }
+                });
+                input.addEventListener('blur', () => {
+                    const icon = input.parentElement.querySelector('.material-symbols-outlined');
+                    if (icon) {
+                        icon.classList.remove('text-secondary');
+                        icon.classList.add('text-outline');
+                    }
+                });
+            });
+
+            // Form Submission and Validation Logic
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const username = document.getElementById('username').value.trim();
+                    const password = document.getElementById('password').value.trim();
+
+                    if (!username || !password) {
+                        alert("아이디 또는 비밀번호를 입력해주세요.");
+                        return;
+                    }
+
+                    // Simulated authentication state
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('userName', username);
+                    localStorage.setItem('lastLogin', new Date().toISOString());
+                    
+                    // Redirect to dashboard (index.html) with success parameter
+                    window.location.href = 'index.html?login=success';
+                });
+            }
+        });
+      </script>
+</body></html>

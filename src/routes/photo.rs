@@ -12,7 +12,7 @@ use crate::{
     AppState,
     auth::AuthUser,
     error::{AppError, Result},
-    models::Plan,
+    models::{Plan, PlanPublic},
 };
 
 pub async fn upload(
@@ -20,7 +20,7 @@ pub async fn upload(
     AuthUser(claims): AuthUser,
     Path(plan_id): Path<String>,
     mut multipart: Multipart,
-) -> Result<Json<Plan>> {
+) -> Result<Json<PlanPublic>> {
     let plan: Option<Plan> = state
         .db
         .client
@@ -79,7 +79,7 @@ pub async fn upload(
         .take(0)?;
 
     updated
-        .map(Json)
+        .map(|p| Json(PlanPublic::from(p)))
         .ok_or_else(|| AppError::Internal(anyhow::anyhow!("사진 저장 실패")))
 }
 

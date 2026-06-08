@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Study Planner - 계정 생성</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error": "#ba1a1a",
+                        "surface-dim": "#d9dadb",
+                        "outline-variant": "#c5c6cf",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e1e3e4",
+                        "tertiary-container": "#171c1e",
+                        "on-tertiary-container": "#808587",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#a0f0f0",
+                        "tertiary": "#000000",
+                        "inverse-primary": "#b6c6ee",
+                        "inverse-surface": "#2e3132",
+                        "tertiary-fixed": "#dfe3e6",
+                        "on-error-container": "#93000a",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#4e5e81",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#002020",
+                        "surface-container-low": "#f3f4f5",
+                        "on-primary-fixed-variant": "#364768",
+                        "outline": "#75777f",
+                        "on-secondary-container": "#0b6e6e",
+                        "on-tertiary-fixed": "#171c1e",
+                        "primary-fixed-dim": "#b6c6ee",
+                        "primary-fixed": "#d8e2ff",
+                        "background": "#f8f9fa",
+                        "secondary-container": "#9deeed",
+                        "primary": "#000000",
+                        "on-primary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "surface": "#f8f9fa",
+                        "on-secondary-fixed-variant": "#004f4f",
+                        "on-primary-container": "#7384a8",
+                        "success-teal": "#006a6a",
+                        "secondary-fixed-dim": "#84d4d3",
+                        "on-background": "#191c1d",
+                        "surface-container-highest": "#e1e3e4",
+                        "secondary": "#006a6a",
+                        "surface-bright": "#f8f9fa",
+                        "primary-container": "#081b3a",
+                        "surface-container": "#edeeef",
+                        "on-surface-variant": "#44474e",
+                        "on-tertiary-fixed-variant": "#42484a",
+                        "tertiary-fixed-dim": "#c3c7ca",
+                        "inverse-on-surface": "#f0f1f2",
+                        "on-surface": "#191c1d",
+                        "on-primary-fixed": "#081b3a",
+                        "error-red": "#ba1a1a",
+                        "surface-container-high": "#e7e8e9"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max-width": "1536px",
+                        "unit": "8px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px",
+                        "gutter": "32px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "title-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "display-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #f8f9fa;
+            background-image: radial-gradient(#d1d5db 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+            font-family: 'Inter', sans-serif;
+            color: #191c1d;
+        }
+        .form-card {
+            box-shadow: 0px 4px 24px rgba(3, 22, 53, 0.06);
+            border: 1px solid #e1e3e4;
+        }
+        .input-focus-ring:focus {
+            border-color: #081b3a;
+            box-shadow: 0 0 0 3px rgba(8, 27, 58, 0.1);
+            outline: none;
+        }
+        .btn-primary-custom {
+            background-color: #081b3a;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-primary-custom:hover {
+            background-color: #0d2a5a;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(8, 27, 58, 0.2);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .animate-slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-fade-in { animation: fadeIn 0.8s ease-out forwards; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-margin-mobile md:p-8">
+<header class="mb-8 flex flex-col items-center animate-fade-in text-center">
+<a class="block mb-4 transition-transform hover:scale-105 active:scale-95" href="index.html">
+<img alt="StudyPlanner Logo" class="w-16 h-16 object-contain rounded-xl" src="logo.png"/>
+</a>
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface tracking-tight">Study Planner</h1>
+<p class="font-body-lg text-on-surface-variant mt-2 max-w-xs">학업의 원동력을 높이는 차분한 학습 공간</p>
+</header>
+<main class="w-full max-w-[440px] animate-slide-up">
+<!-- Registration Form Card -->
+<div class="form-card bg-surface-container-lowest rounded-xl p-8 md:p-10">
+<div class="mb-8">
+<h2 class="font-title-md text-on-surface mb-1">계정 생성</h2>
+<p class="font-body-sm text-on-surface-variant">집중하는 학습자들의 커뮤니티에 합류하세요</p>
+</div>
+<form action="login.html" class="space-y-5" id="registrationForm" method="GET">
+<!-- Name Field -->
+<div class="space-y-1.5">
+<label class="block font-label-md text-on-surface-variant" for="full-name">성함</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">person</span>
+<input class="w-full pl-11 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-lg text-on-surface input-focus-ring transition-all placeholder:text-outline/50" id="full-name" name="name" placeholder="성함을 입력하세요" required="" type="text"/>
+</div>
+</div>
+<!-- ID / Username Field -->
+<div class="space-y-1.5">
+<label class="block font-label-md text-on-surface-variant" for="username">아이디</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">badge</span>
+<input class="w-full pl-11 pr-4 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-lg text-on-surface input-focus-ring transition-all placeholder:text-outline/50" id="username" name="username" placeholder="아이디를 입력하세요" required="" type="text"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-1.5">
+<label class="block font-label-md text-on-surface-variant" for="password">비밀번호</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">lock</span>
+<input class="w-full pl-11 pr-12 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-lg text-on-surface input-focus-ring transition-all placeholder:text-outline/50" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+<button aria-label="비밀번호 보기" class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors" data-toggle-password="" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+<p class="font-label-md text-[11px] text-on-surface-variant/80 pl-1">영문과 숫자를 포함하여 8자 이상이어야 합니다.</p>
+</div>
+<!-- Confirm Password Field -->
+<div class="space-y-1.5">
+<label class="block font-label-md text-on-surface-variant" for="confirm-password">비밀번호 확인</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">lock</span>
+<input class="w-full pl-11 pr-12 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-lg text-on-surface input-focus-ring transition-all placeholder:text-outline/50" id="confirm-password" name="confirm-password" placeholder="비밀번호를 한 번 더 입력하세요" required="" type="password"/>
+<button aria-label="비밀번호 확인 보기" class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors" data-toggle-password="" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+</div>
+<!-- Submit Button -->
+<button class="w-full py-4 px-6 rounded-lg font-label-md text-white btn-primary-custom active:scale-[0.98] flex items-center justify-center gap-2 group mt-4" type="submit">
+<span>계정 만들기</span>
+<span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</form>
+<div class="mt-8 pt-6 border-t border-outline-variant/30 flex flex-col items-center gap-4">
+<p class="font-body-sm text-on-surface-variant">
+                    이미 계정이 있으신가요? 
+                    <a class="text-on-primary-fixed-variant font-semibold hover:underline ml-1 transition-all" href="login.html">로그인</a>
+</p>
+</div>
+</div>
+<!-- Footnote -->
+<footer class="mt-8 text-center px-4">
+<p class="font-label-md text-outline">
+                계정을 생성함으로써 
+                <a class="hover:text-on-surface transition-colors underline decoration-outline-variant" href="#">이용약관</a> 및 
+                <a class="hover:text-on-surface transition-colors underline decoration-outline-variant" href="#">개인정보처리방침</a>에 동의하게 됩니다.
+            </p>
+</footer>
+</main>
+<script>
+        // Form submission handling
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('비밀번호가 일치하지 않습니다.');
+                return;
+            }
+            
+            if (password.length < 8) {
+                e.preventDefault();
+                alert('비밀번호는 8자 이상이어야 합니다.');
+                return;
+            }
+
+            // If valid, the form proceeds to login.html via GET as specified in action
+            alert('회원가입이 완료되었습니다! 로그인 화면으로 이동합니다.');
+        });
+
+        // Password visibility toggle logic
+        document.querySelectorAll('button[data-toggle-password]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = this.closest('.relative').querySelector('input');
+                const icon = this.querySelector('.material-symbols-outlined');
+                if (input) {
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.textContent = 'visibility_off';
+                    } else {
+                        input.type = 'password';
+                        icon.textContent = 'visibility';
+                    }
+                }
+            });
+        });
+      </script>
+</body></html>
