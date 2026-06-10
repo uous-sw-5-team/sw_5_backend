@@ -15,6 +15,19 @@ use crate::{
     models::{Plan, PlanPublic},
 };
 
+#[utoipa::path(
+    post,
+    path = "/api/plans/{id}/photos",
+    tag = "photos",
+    security(("bearer_auth" = [])),
+    params(("id" = String, Path, description = "플랜 ID")),
+    request_body(content = crate::models::PhotoUpload, content_type = "multipart/form-data"),
+    responses(
+        (status = 200, description = "photos 배열이 갱신된 플랜", body = PlanPublic),
+        (status = 400, description = "지원하지 않는 형식 / 파일 없음"),
+        (status = 404, description = "플랜 없음")
+    )
+)]
 pub async fn upload(
     State(state): State<AppState>,
     AuthUser(claims): AuthUser,
@@ -24,8 +37,8 @@ pub async fn upload(
     let plan: Option<Plan> = state
         .db
         .client
-        .query("SELECT * FROM plan WHERE id = $id AND user_id = $uid LIMIT 1")
-        .bind(("id", format!("plan:{plan_id}")))
+        .query("SELECT * FROM plan WHERE id = type::thing('plan', $id) AND user_id = $uid LIMIT 1")
+        .bind(("id", plan_id.clone()))
         .bind(("uid", claims.sub.clone()))
         .await?
         .take(0)?;
@@ -70,9 +83,9 @@ pub async fn upload(
             "UPDATE plan SET
                 photos     = array::concat(photos, $new_photos),
                 updated_at = time::now()
-             WHERE id = $id AND user_id = $uid",
+             WHERE id = type::thing('plan', $id) AND user_id = $uid",
         )
-        .bind(("id", format!("plan:{plan_id}")))
+        .bind(("id", plan_id))
         .bind(("uid", claims.sub))
         .bind(("new_photos", saved_paths))
         .await?
@@ -83,6 +96,17 @@ pub async fn upload(
         .ok_or_else(|| AppError::Internal(anyhow::anyhow!("사진 저장 실패")))
 }
 
+#[utoipa::path(
+    get,
+    path = "/api/photos/{filename}",
+    tag = "photos",
+    params(("filename" = String, Path, description = "plan.photos의 파일명")),
+    responses(
+        (status = 200, description = "이미지 바이너리", content_type = "image/*"),
+        (status = 400, description = "잘못된 파일 이름"),
+        (status = 404, description = "파일 없음")
+    )
+)]
 pub async fn serve(Path(filename): Path<String>) -> Result<Response> {
     if filename.contains("..") || filename.contains('/') {
         return Err(AppError::BadRequest("잘못된 파일 이름".into()));

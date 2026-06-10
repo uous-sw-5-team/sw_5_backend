@@ -3,13 +3,17 @@ mod error;
 mod models;
 mod routes;
 mod auth;
+mod openapi;
 
 use std::sync::Arc;
 use axum::Router;
 use tower_http::cors::{CorsLayer, Any};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+use utoipa::OpenApi;
+use utoipa_swagger_ui::SwaggerUi;
 
 use db::Database;
+use openapi::ApiDoc;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -37,11 +41,13 @@ async fn main() -> anyhow::Result<()> {
         .allow_headers(Any);
 
     let app = Router::new()
+        .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
         .nest("/api", routes::all_routes(state))
         .layer(cors);
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await?;
     tracing::info!("서버 시작: http://0.0.0.0:8080");
+    tracing::info!("Swagger UI: http://localhost:8080/swagger-ui");
     axum::serve(listener, app).await?;
 
     Ok(())

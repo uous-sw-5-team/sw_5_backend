@@ -87,8 +87,10 @@
     "id": "x7k2p9",
     "user_id": "user:abc123",
     "date": "2026-06-08",
-    "title": "제주도 여행 첫째 날",
-    "content": "한라산 등반 예정",
+    "title": "역사 에세이 초안 작성",
+    "description": "산업혁명의 영향에 관한 보고서 개요",
+    "time": "오전 09:00",
+    "completed": false,
     "photos": ["a1b2.jpg", "c3d4.png"],
     "created_at": "2026-06-08T01:00:00Z",
     "updated_at": "2026-06-08T01:00:00Z"
@@ -96,22 +98,33 @@
 ]
 ```
 
+> **프론트 Todo ↔ 백엔드 Plan 필드 매핑**
+> | 프론트 | 백엔드 | 비고 |
+> |---|---|---|
+> | `title` | `title` | |
+> | `description` | `description` | |
+> | `time` | `time` | 자유 형식 문자열 (예: `"오전 09:00"`), 없으면 `null` |
+> | `completed` | `completed` | 생성 시 항상 `false`, 토글은 PUT |
+> | `date` | `date` | `"YYYY-MM-DD"` |
+> | `id` (number) | `id` (string) | 프론트는 string으로 받도록 변경 필요 |
+
 #### POST `/api/plans` — 생성
-요청
+요청 (`description`, `time`은 선택)
 ```json
-{ "date": "2026-06-08", "title": "제목", "content": "내용(선택)" }
+{ "date": "2026-06-08", "title": "제목", "description": "내용(선택)", "time": "오전 09:00" }
 ```
-응답 `200` — 생성된 plan 객체 (위 목록 항목과 동일 구조).
+응답 `200` — 생성된 plan 객체 (위 목록 항목과 동일 구조, `completed`는 `false`).
 
 #### GET `/api/plans/{id}` — 단건 조회
 응답 `200` plan 객체 / `404` 없음.
 
-#### PUT `/api/plans/{id}` — 수정
-요청 (둘 다 선택, 보낸 필드만 반영)
+#### PUT `/api/plans/{id}` — 수정 (완료 체크 토글 포함)
+요청 (모두 선택, 보낸 필드만 반영)
 ```json
-{ "title": "새 제목", "content": "새 내용" }
+{ "title": "새 제목", "description": "새 내용", "time": "오후 03:00", "completed": true }
 ```
 응답 `200` 수정된 plan 객체.
+> 완료 체크/해제는 `{ "completed": true }` 또는 `{ "completed": false }`만 보내면 됩니다.
 
 #### DELETE `/api/plans/{id}` — 삭제
 응답 `200`

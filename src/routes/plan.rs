@@ -5,7 +5,7 @@ use axum::{
 use serde::Deserialize;
 
 use crate::{
-    AppState,
+    AppState,   
     auth::AuthUser,
     error::{AppError, Result},
     models::{CreatePlanRequest, Plan, PlanPublic, UpdatePlanRequest},
@@ -17,6 +17,20 @@ pub struct DateFilter {
     pub month: Option<String>,
 }
 
+#[utoipa::path(
+    get,
+    path = "/api/plans",
+    tag = "plans",
+    security(("bearer_auth" = [])),
+    params(
+        ("date" = Option<String>, Query, description = "특정 날짜 (YYYY-MM-DD)"),
+        ("month" = Option<String>, Query, description = "해당 월 (YYYY-MM)")
+    ),
+    responses(
+        (status = 200, description = "플랜 목록", body = Vec<PlanPublic>),
+        (status = 401, description = "인증 실패")
+    )
+)]
 pub async fn list(
     State(state): State<AppState>,
     AuthUser(claims): AuthUser,
@@ -54,6 +68,17 @@ pub async fn list(
     Ok(Json(plans.into_iter().map(PlanPublic::from).collect()))
 }
 
+#[utoipa::path(
+    post,
+    path = "/api/plans",
+    tag = "plans",
+    security(("bearer_auth" = [])),
+    request_body = CreatePlanRequest,
+    responses(
+        (status = 200, description = "생성된 플랜", body = PlanPublic),
+        (status = 401, description = "인증 실패")
+    )
+)]
 pub async fn create(
     State(state): State<AppState>,
     AuthUser(claims): AuthUser,
@@ -64,18 +89,21 @@ pub async fn create(
         .client
         .query(
             "CREATE plan SET
-                user_id    = $uid,
-                date       = <datetime> $date,
-                title      = $title,
-                content    = $content,
-                photos     = [],
-                created_at = time::now(),
-                updated_at = time::now()",
+                user_id     = $uid,
+                date        = <datetime> $date,
+                title       = $title,
+                description = $description,
+                `time`      = $time,
+                completed   = false,
+                photos      = [],
+                created_at  = time::now(),
+                updated_at  = time::now()",
         )
         .bind(("uid", claims.sub))
         .bind(("date", req.date.to_string()))
         .bind(("title", req.title))
-        .bind(("content", req.content))
+        .bind(("description", req.description))
+        .bind(("time", req.time))
         .await?
         .take(0)?;
 
@@ -83,6 +111,17 @@ pub async fn create(
         .ok_or_else(|| AppError::Internal(anyhow::anyhow!("플랜 생성 실패")))
 }
 
+#[utoipa::path(
+    get,
+    path = "/api/plans/{id}",
+    tag = "plans",
+    security(("bearer_auth" = [])),
+    params(("id" = String, Path, description = "플랜 ID (접두사 없는 평문)")),
+    responses(
+        (status = 200, description = "플랜 단건", body = PlanPublic),
+        (status = 404, description = "플랜 없음")
+    )
+)]
 pub async fn get_one(
     State(state): State<AppState>,
     AuthUser(claims): AuthUser,
@@ -91,8 +130,8 @@ pub async fn get_one(
     let plan: Option<Plan> = state
         .db
         .client
-        .query("SELECT * FROM plan WHERE id = $id AND user_id = $uid LIMIT 1")
-        .bind(("id", format!("plan:{id}")))
+        .query("SELECT * FROM plan WHERE id = type::thing('plan', $id) AND user_id = $uid LIMIT 1")
+        .bind(("id", id))
         .bind(("uid", claims.sub))
         .await?
         .take(0)?;
@@ -101,6 +140,18 @@ pub async fn get_one(
         .ok_or_else(|| AppError::NotFound("플랜을 찾을 수 없습니다.".into()))
 }
 
+#[utoipa::path(
+    put,
+    path = "/api/plans/{id}",
+    tag = "plans",
+    security(("bearer_auth" = [])),
+    params(("id" = String, Path, description = "플랜 ID")),
+    request_body = UpdatePlanRequest,
+    responses(
+        (status = 200, description = "수정된 플랜", body = PlanPublic),
+        (status = 404, description = "플랜 없음")
+    )
+)]
 pub async fn update(
     State(state): State<AppState>,
     AuthUser(claims): AuthUser,
@@ -110,8 +161,8 @@ pub async fn update(
     let existing: Option<Plan> = state
         .db
         .client
-        .query("SELECT * FROM plan WHERE id = $id AND user_id = $uid LIMIT 1")
-        .bind(("id", format!("plan:{id}")))
+        .query("SELECT * FROM plan WHERE id = type::thing('plan', $id) AND user_id = $uid LIMIT 1")
+        .bind(("id", id.clone()))
         .bind(("uid", claims.sub.clone()))
         .await?
         .take(0)?;
@@ -123,15 +174,19 @@ pub async fn update(
         .client
         .query(
             "UPDATE plan SET
-                title      = if $title != NONE then $title else title end,
-                content    = if $content != NONE then $content else content end,
-                updated_at = time::now()
-             WHERE id = $id AND user_id = $uid",
+                title       = if $title != NONE then $title else title end,
+                description = if $description != NONE then $description else description end,
+                `time`      = if $time != NONE then $time else `time` end,
+                completed   = if $completed != NONE then $completed else completed end,
+                updated_at  = time::now()
+             WHERE id = type::thing('plan', $id) AND user_id = $uid",
         )
-        .bind(("id", format!("plan:{id}")))
+        .bind(("id", id))
         .bind(("uid", claims.sub))
         .bind(("title", req.title))
-        .bind(("content", req.content))
+        .bind(("description", req.description))
+        .bind(("time", req.time))
+        .bind(("completed", req.completed))
         .await?
         .take(0)?;
 
@@ -139,6 +194,17 @@ pub async fn update(
         .ok_or_else(|| AppError::Internal(anyhow::anyhow!("플랜 업데이트 실패")))
 }
 
+#[utoipa::path(
+    delete,
+    path = "/api/plans/{id}",
+    tag = "plans",
+    security(("bearer_auth" = [])),
+    params(("id" = String, Path, description = "플랜 ID")),
+    responses(
+        (status = 200, description = "삭제 완료 ({ \"message\": \"삭제 완료\" })"),
+        (status = 404, description = "플랜 없음")
+    )
+)]
 pub async fn delete(
     State(state): State<AppState>,
     AuthUser(claims): AuthUser,
@@ -147,8 +213,8 @@ pub async fn delete(
     let existing: Option<Plan> = state
         .db
         .client
-        .query("SELECT * FROM plan WHERE id = $id AND user_id = $uid LIMIT 1")
-        .bind(("id", format!("plan:{id}")))
+        .query("SELECT * FROM plan WHERE id = type::thing('plan', $id) AND user_id = $uid LIMIT 1")
+        .bind(("id", id.clone()))
         .bind(("uid", claims.sub.clone()))
         .await?
         .take(0)?;
@@ -158,8 +224,8 @@ pub async fn delete(
     state
         .db
         .client
-        .query("DELETE plan WHERE id = $id AND user_id = $uid")
-        .bind(("id", format!("plan:{id}")))
+        .query("DELETE plan WHERE id = type::thing('plan', $id) AND user_id = $uid")
+        .bind(("id", id))
         .bind(("uid", claims.sub))
         .await?;
 

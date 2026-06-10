@@ -7,6 +7,16 @@ use crate::{
     models::{AuthResponse, LoginRequest, RegisterRequest, User, UserPublic},
 };
 
+#[utoipa::path(
+    post,
+    path = "/api/auth/register",
+    tag = "auth",
+    request_body = RegisterRequest,
+    responses(
+        (status = 200, description = "회원가입 성공 (token + user 반환)", body = AuthResponse),
+        (status = 400, description = "이미 사용 중인 이메일")
+    )
+)]
 pub async fn register(
     State(state): State<AppState>,
     Json(req): Json<RegisterRequest>,
@@ -52,6 +62,16 @@ pub async fn register(
     }))
 }
 
+#[utoipa::path(
+    post,
+    path = "/api/auth/login",
+    tag = "auth",
+    request_body = LoginRequest,
+    responses(
+        (status = 200, description = "로그인 성공 (token + user 반환)", body = AuthResponse),
+        (status = 401, description = "이메일 또는 비밀번호 불일치")
+    )
+)]
 pub async fn login(
     State(state): State<AppState>,
     Json(req): Json<LoginRequest>,
@@ -82,15 +102,32 @@ pub async fn login(
     }))
 }
 
+#[utoipa::path(
+    get,
+    path = "/api/auth/me",
+    tag = "auth",
+    security(("bearer_auth" = [])),
+    responses(
+        (status = 200, description = "내 정보", body = UserPublic),
+        (status = 401, description = "토큰 없음/무효")
+    )
+)]
 pub async fn me(
     State(state): State<AppState>,
     AuthUser(claims): AuthUser,
 ) -> Result<Json<UserPublic>> {
+    // claims.sub은 "user:abc123" 형태이므로 접두사를 떼고 type::thing으로 record-id 조회.
+    let raw_id = claims
+        .sub
+        .strip_prefix("user:")
+        .unwrap_or(&claims.sub)
+        .to_string();
+
     let user: Option<User> = state
         .db
         .client
-        .query("SELECT * FROM $id LIMIT 1")
-        .bind(("id", claims.sub))
+        .query("SELECT * FROM type::thing('user', $id) LIMIT 1")
+        .bind(("id", raw_id))
         .await?
         .take(0)?;
 
