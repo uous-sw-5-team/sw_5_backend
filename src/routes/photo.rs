@@ -12,9 +12,12 @@ use crate::{
     AppState,
     auth::AuthUser,
     error::{AppError, Result},
-    models::{Plan, PlanPublic},
+    models::{ErrorResponse, Plan, PlanPublic},
 };
 
+/// 사진 업로드
+///
+/// 플랜에 사진을 업로드합니다. multipart/form-data, 필드명 photo (여러 개 가능).
 #[utoipa::path(
     post,
     path = "/api/plans/{id}/photos",
@@ -24,8 +27,9 @@ use crate::{
     request_body(content = crate::models::PhotoUpload, content_type = "multipart/form-data"),
     responses(
         (status = 200, description = "photos 배열이 갱신된 플랜", body = PlanPublic),
-        (status = 400, description = "지원하지 않는 형식 / 파일 없음"),
-        (status = 404, description = "플랜 없음")
+        (status = 400, description = "지원하지 않는 형식 / 파일 없음", body = ErrorResponse),
+        (status = 401, description = "인증 실패", body = ErrorResponse),
+        (status = 404, description = "플랜 없음", body = ErrorResponse)
     )
 )]
 pub async fn upload(
@@ -96,6 +100,9 @@ pub async fn upload(
         .ok_or_else(|| AppError::Internal(anyhow::anyhow!("사진 저장 실패")))
 }
 
+/// 사진 서빙
+///
+/// 업로드된 이미지 파일을 반환합니다. 인증 불필요.
 #[utoipa::path(
     get,
     path = "/api/photos/{filename}",
@@ -103,8 +110,8 @@ pub async fn upload(
     params(("filename" = String, Path, description = "plan.photos의 파일명")),
     responses(
         (status = 200, description = "이미지 바이너리", content_type = "image/*"),
-        (status = 400, description = "잘못된 파일 이름"),
-        (status = 404, description = "파일 없음")
+        (status = 400, description = "잘못된 파일 이름", body = ErrorResponse),
+        (status = 404, description = "파일 없음", body = ErrorResponse)
     )
 )]
 pub async fn serve(Path(filename): Path<String>) -> Result<Response> {

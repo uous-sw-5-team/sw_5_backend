@@ -8,7 +8,7 @@ use crate::{
     AppState,   
     auth::AuthUser,
     error::{AppError, Result},
-    models::{CreatePlanRequest, Plan, PlanPublic, UpdatePlanRequest},
+    models::{CreatePlanRequest, ErrorResponse, Plan, PlanPublic, UpdatePlanRequest},
 };
 
 #[derive(Deserialize)]
@@ -17,6 +17,9 @@ pub struct DateFilter {
     pub month: Option<String>,
 }
 
+/// 플랜 목록 조회
+///
+/// 내 플랜 목록을 반환합니다. date 또는 month로 필터링할 수 있고, 없으면 전체를 최신 날짜순으로 반환합니다.
 #[utoipa::path(
     get,
     path = "/api/plans",
@@ -28,7 +31,7 @@ pub struct DateFilter {
     ),
     responses(
         (status = 200, description = "플랜 목록", body = Vec<PlanPublic>),
-        (status = 401, description = "인증 실패")
+        (status = 401, description = "인증 실패", body = ErrorResponse)
     )
 )]
 pub async fn list(
@@ -68,6 +71,9 @@ pub async fn list(
     Ok(Json(plans.into_iter().map(PlanPublic::from).collect()))
 }
 
+/// 플랜 생성
+///
+/// 새 플랜을 생성합니다. completed는 항상 false로 시작합니다.
 #[utoipa::path(
     post,
     path = "/api/plans",
@@ -76,7 +82,7 @@ pub async fn list(
     request_body = CreatePlanRequest,
     responses(
         (status = 200, description = "생성된 플랜", body = PlanPublic),
-        (status = 401, description = "인증 실패")
+        (status = 401, description = "인증 실패", body = ErrorResponse)
     )
 )]
 pub async fn create(
@@ -111,6 +117,9 @@ pub async fn create(
         .ok_or_else(|| AppError::Internal(anyhow::anyhow!("플랜 생성 실패")))
 }
 
+/// 플랜 단건 조회
+///
+/// id로 플랜 하나를 조회합니다. id는 목록/생성 응답의 평문 id를 그대로 사용합니다.
 #[utoipa::path(
     get,
     path = "/api/plans/{id}",
@@ -119,7 +128,8 @@ pub async fn create(
     params(("id" = String, Path, description = "플랜 ID (접두사 없는 평문)")),
     responses(
         (status = 200, description = "플랜 단건", body = PlanPublic),
-        (status = 404, description = "플랜 없음")
+        (status = 401, description = "인증 실패", body = ErrorResponse),
+        (status = 404, description = "플랜 없음", body = ErrorResponse)
     )
 )]
 pub async fn get_one(
@@ -140,6 +150,9 @@ pub async fn get_one(
         .ok_or_else(|| AppError::NotFound("플랜을 찾을 수 없습니다.".into()))
 }
 
+/// 플랜 수정 (완료 토글 포함)
+///
+/// 보낸 필드만 부분 수정합니다. 완료 체크/해제는 completed 필드만 보내면 됩니다.
 #[utoipa::path(
     put,
     path = "/api/plans/{id}",
@@ -149,7 +162,8 @@ pub async fn get_one(
     request_body = UpdatePlanRequest,
     responses(
         (status = 200, description = "수정된 플랜", body = PlanPublic),
-        (status = 404, description = "플랜 없음")
+        (status = 401, description = "인증 실패", body = ErrorResponse),
+        (status = 404, description = "플랜 없음", body = ErrorResponse)
     )
 )]
 pub async fn update(
@@ -194,6 +208,9 @@ pub async fn update(
         .ok_or_else(|| AppError::Internal(anyhow::anyhow!("플랜 업데이트 실패")))
 }
 
+/// 플랜 삭제
+///
+/// id로 플랜을 삭제합니다.
 #[utoipa::path(
     delete,
     path = "/api/plans/{id}",
@@ -202,7 +219,8 @@ pub async fn update(
     params(("id" = String, Path, description = "플랜 ID")),
     responses(
         (status = 200, description = "삭제 완료 ({ \"message\": \"삭제 완료\" })"),
-        (status = 404, description = "플랜 없음")
+        (status = 401, description = "인증 실패", body = ErrorResponse),
+        (status = 404, description = "플랜 없음", body = ErrorResponse)
     )
 )]
 pub async fn delete(

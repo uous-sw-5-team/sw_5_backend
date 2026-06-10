@@ -4,9 +4,12 @@ use crate::{
     AppState,
     auth::{AuthUser, create_token},
     error::{AppError, Result},
-    models::{AuthResponse, LoginRequest, RegisterRequest, User, UserPublic},
+    models::{AuthResponse, ErrorResponse, LoginRequest, RegisterRequest, User, UserPublic},
 };
 
+/// 회원가입
+///
+/// 이메일/비밀번호로 가입하고 JWT 토큰과 유저 정보를 반환합니다.
 #[utoipa::path(
     post,
     path = "/api/auth/register",
@@ -14,7 +17,7 @@ use crate::{
     request_body = RegisterRequest,
     responses(
         (status = 200, description = "회원가입 성공 (token + user 반환)", body = AuthResponse),
-        (status = 400, description = "이미 사용 중인 이메일")
+        (status = 400, description = "이미 사용 중인 이메일", body = ErrorResponse)
     )
 )]
 pub async fn register(
@@ -62,6 +65,9 @@ pub async fn register(
     }))
 }
 
+/// 로그인
+///
+/// 이메일/비밀번호로 로그인하고 JWT 토큰과 유저 정보를 반환합니다.
 #[utoipa::path(
     post,
     path = "/api/auth/login",
@@ -69,7 +75,7 @@ pub async fn register(
     request_body = LoginRequest,
     responses(
         (status = 200, description = "로그인 성공 (token + user 반환)", body = AuthResponse),
-        (status = 401, description = "이메일 또는 비밀번호 불일치")
+        (status = 401, description = "이메일 또는 비밀번호 불일치", body = ErrorResponse)
     )
 )]
 pub async fn login(
@@ -102,6 +108,9 @@ pub async fn login(
     }))
 }
 
+/// 내 정보
+///
+/// 현재 토큰의 유저 정보를 반환합니다. 세션 복원에 사용합니다.
 #[utoipa::path(
     get,
     path = "/api/auth/me",
@@ -109,7 +118,8 @@ pub async fn login(
     security(("bearer_auth" = [])),
     responses(
         (status = 200, description = "내 정보", body = UserPublic),
-        (status = 401, description = "토큰 없음/무효")
+        (status = 401, description = "토큰 없음/무효", body = ErrorResponse),
+        (status = 404, description = "유저 없음", body = ErrorResponse)
     )
 )]
 pub async fn me(

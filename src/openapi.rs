@@ -31,7 +31,8 @@ impl Modify for SecurityAddon {
     info(
         title = "Planner Backend API",
         version = "0.1.0",
-        description = "Axum + SurrealDB 기반 플래너 API. 인증이 필요한 요청은 우측 상단 Authorize 버튼에 로그인/회원가입으로 받은 JWT를 넣고 'Try it out'으로 호출하세요."
+        description = "Axum + SurrealDB 기반 플래너 API. 인증이 필요한 요청은 우측 상단 Authorize 버튼에 로그인/회원가입으로 받은 JWT를 넣고 'Try it out'으로 호출하세요.",
+        contact(name = "sw5 backend team", url = "https://github.com/uous-sw-5-team/sw_5_backend")
     ),
     servers(
         (url = "http://localhost:8080", description = "로컬 개발 서버")
@@ -57,6 +58,7 @@ impl Modify for SecurityAddon {
         models::CreatePlanRequest,
         models::UpdatePlanRequest,
         models::PhotoUpload,
+        models::ErrorResponse,
     )),
     modifiers(&SecurityAddon),
     tags(

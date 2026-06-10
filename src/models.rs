@@ -16,19 +16,14 @@ pub struct User {
 
 #[derive(Debug, Deserialize, ToSchema)]
 pub struct RegisterRequest {
-    #[schema(example = "홍길동")]
     pub username: String,
-    #[schema(example = "hong@example.com")]
     pub email: String,
-    #[schema(example = "mypassword")]
     pub password: String,
 }
 
 #[derive(Debug, Deserialize, ToSchema)]
 pub struct LoginRequest {
-    #[schema(example = "hong@example.com")]
     pub email: String,
-    #[schema(example = "mypassword")]
     pub password: String,
 }
 
@@ -40,11 +35,8 @@ pub struct AuthResponse {
 
 #[derive(Debug, Serialize, Deserialize, Clone, ToSchema)]
 pub struct UserPublic {
-    #[schema(example = "user:abc123")]
     pub id: String,
-    #[schema(example = "홍길동")]
     pub username: String,
-    #[schema(example = "hong@example.com")]
     pub email: String,
 }
 
@@ -71,19 +63,16 @@ pub struct Plan {
 // 경로 파라미터(/plans/{id})에 그대로 다시 넣어 사용 가능.
 #[derive(Debug, Serialize, ToSchema)]
 pub struct PlanPublic {
-    #[schema(example = "x7k2p9")]
+    /// 경로(/plans/{id})에 그대로 쓰는 평문 id
     pub id: String,
-    #[schema(example = "user:abc123")]
     pub user_id: String,
-    #[schema(example = "2026-06-08")]
+    /// 날짜 (YYYY-MM-DD)
     pub date: NaiveDate,
-    #[schema(example = "역사 에세이 초안 작성")]
     pub title: String,
-    #[schema(example = "산업혁명의 영향에 관한 보고서 개요")]
     pub description: Option<String>,
-    #[schema(example = "오전 09:00")]
+    /// 표시용 시각 문자열, 자유 형식 (예: 오전 09:00). 없으면 null
     pub time: Option<String>,
-    #[schema(example = false)]
+    /// 완료 체크 여부
     pub completed: bool,
     pub photos: Vec<String>,
     pub created_at: DateTime<Utc>,
@@ -110,25 +99,21 @@ impl From<Plan> for PlanPublic {
 
 #[derive(Debug, Deserialize, ToSchema)]
 pub struct CreatePlanRequest {
-    #[schema(example = "2026-06-08")]
+    /// 날짜 (YYYY-MM-DD)
     pub date: NaiveDate,
-    #[schema(example = "역사 에세이 초안 작성")]
     pub title: String,
-    #[schema(example = "산업혁명의 영향에 관한 보고서 개요")]
     pub description: Option<String>,
-    #[schema(example = "오전 09:00")]
+    /// 표시용 시각 문자열, 자유 형식 (예: 오전 09:00)
     pub time: Option<String>,
 }
 
 #[derive(Debug, Deserialize, ToSchema)]
 pub struct UpdatePlanRequest {
-    #[schema(example = "새 제목")]
     pub title: Option<String>,
-    #[schema(example = "새 내용")]
     pub description: Option<String>,
-    #[schema(example = "오후 03:00")]
+    /// 표시용 시각 문자열, 자유 형식 (예: 오후 03:00)
     pub time: Option<String>,
-    #[schema(example = true)]
+    /// 완료 체크/해제
     pub completed: Option<bool>,
 }
 
@@ -139,6 +124,14 @@ pub struct PhotoUpload {
     /// 업로드할 이미지 파일 (jpeg / png / webp / gif)
     #[schema(value_type = String, format = Binary)]
     pub photo: Vec<u8>,
+}
+
+// ── 공통 에러 응답 ────────────────────────────────────────────────────────────
+
+/// 모든 에러 응답의 공통 형태: `{ "error": "메시지" }`
+#[derive(Debug, Serialize, ToSchema)]
+pub struct ErrorResponse {
+    pub error: String,
 }
 
 // ── JWT Claims ────────────────────────────────────────────────────────────────
