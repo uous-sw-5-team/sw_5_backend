@@ -96,7 +96,7 @@ pub async fn create(
         .query(
             "CREATE plan SET
                 user_id     = $uid,
-                date        = <datetime> $date,
+                date        = $date,
                 title       = $title,
                 description = $description,
                 `time`      = $time,
